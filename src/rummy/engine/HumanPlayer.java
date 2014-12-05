@@ -9,16 +9,7 @@ public class HumanPlayer extends Player{
 	public HumanPlayer(String pName) {
 		super(pName);
 	}
-
-	@Override
-	public Card discard(Card pCard){
-		Iterator<Card> i = (aHand.getUnmatchedCards()).iterator();
-		Card removedCard = i.next();
-		aHand.remove(removedCard);
-		aHand.add(pCard);
-		return removedCard;
-	}
-
+	
 	@Override
 	public Action decide() {
 		aHand.autoMatch();

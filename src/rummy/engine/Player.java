@@ -12,7 +12,9 @@ public abstract class Player implements Serializable {
 	private String aName;
 	
 	abstract Action decide();
-	abstract Card discard(Card pCard);
+	public void discard(Card pCard){
+		aHand.remove(pCard);
+	}
 	
 	protected Player (String pName){
 		aName = pName;
@@ -36,7 +38,11 @@ public abstract class Player implements Serializable {
 		return aScore;
 	}
 	
-	public final Card takeTurn(Card pCard){
-		return discard(pCard);
+	public void Draw(Card pCard){
+		aHand.add(pCard);
 	}
+	
+	/*public final Card takeTurn(Card pCard){
+		return CompDiscard(pCard);
+	}*/
 }

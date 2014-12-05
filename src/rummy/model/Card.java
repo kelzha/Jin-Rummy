@@ -12,7 +12,7 @@ public final class Card implements Comparable<Card>, Serializable
 	 */
 	public enum Rank
 	{
-		TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING, ACE
+		ACE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING
 	}
 
 	/**
@@ -20,7 +20,7 @@ public final class Card implements Comparable<Card>, Serializable
 	 */
 	public enum Suit
 	{
-		CLUBS, DIAMONDS, SPADES, HEARTS
+		CLUBS, DIAMONDS, HEARTS, SPADES
 	}
 
 	private final Rank aRank;

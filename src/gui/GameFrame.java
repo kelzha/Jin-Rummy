@@ -11,6 +11,8 @@ import rummy.engine.EmptyDeckException;
 import rummy.engine.GameEngine;
 import rummy.engine.HumanPlayer;
 import rummy.engine.Player;
+import rummy.engine.Player.Action;
+import rummy.model.Card;
 
 public class GameFrame extends JFrame{
 	public static final Color BACKGROUND_COLOR = new Color(93, 195, 96);
@@ -31,43 +33,121 @@ public class GameFrame extends JFrame{
 	public GameFrame(){
 		setTitle("Jin Rummy");
 		setLayout(new BorderLayout());
-		JPanel aPanel = new JPanel();
+		final JPanel aPanel = new JPanel();
 		aPanel.setLayout(new GridLayout(1, 3));
 		add(aPanel, BorderLayout.CENTER);
 		
-		JPanel aMiddlePanel = makeCenterPanel(3, 1);
+		final JPanel aHumanPanel = makeCenterPanel(4,1);
+		final JPanel aDiscardPanel = makeCenterPanel(3,1);
+		final JPanel aCompPanel = makeCenterPanel(3, 1);
+		final JPanel aMiddlePanel = makeCenterPanel(3, 1);
 		
-		JPanel aRightPanel = makeCenterPanel(3, 1);
+		final JPanel aRightPanel = makeCenterPanel(3, 1);
 		aRightPanel.add(makeNewPanel());
 		
-		CardPanel aPlayer1 = new CardPanel("Human");
-		CardPanel aPlayer2 = new CardPanel("Computer");
+		final CardPanel aPlayer1 = new CardPanel("Human");
+		final CardPanel aPlayer2 = new CardPanel("Computer");
 		aEngine.addCardPanel(aPlayer1);
 		aMiddlePanel.add(aPlayer1);
 		aEngine.addCardPanel(aPlayer2);
 		
-		LogPanel aLog = new LogPanel();
+		final LogPanel aLog = new LogPanel();
 		aEngine.addObserver(aLog);
 		ShowPanel aDiscard = new ShowPanel();
 		aMiddlePanel.add(aDiscard);
 		aEngine.addObserver(aDiscard);
 		aMiddlePanel.add(aPlayer2);
 		
-		JButton aButton = new JButton("Next Turn");
-		aButton.addActionListener(new ActionListener()
-		{
+		JButton aDrawDeckButton = new JButton("Draw from Deck");
+		aDrawDeckButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
 				try {
-					aEngine.nextTurn();
+					aEngine.Draw(Action.DECK);
+					aRightPanel.removeAll();
+					aRightPanel.add(makeNewPanel());
+					aRightPanel.add(aDiscardPanel);
+					aRightPanel.add(makeNewPanel());
+					aRightPanel.revalidate();
+					aRightPanel.repaint();
 				} catch (EmptyDeckException e) {
 					aEngine.newGame(aEngine.getHumanPlayer(), aEngine.getComputerPlayer());
 				}
 			}
 		});
 		
-		aRightPanel.add(aButton);
+		JButton aDrawDiscardButton = new JButton("Draw from Discard");
+		aDrawDiscardButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				try {
+					aEngine.Draw(Action.DISCARD);
+					aRightPanel.removeAll();
+					aRightPanel.add(makeNewPanel());
+					aRightPanel.add(aDiscardPanel);
+					aRightPanel.add(makeNewPanel());
+					aRightPanel.revalidate();
+					aRightPanel.repaint();
+				} catch (EmptyDeckException e) {
+					aEngine.newGame(aEngine.getHumanPlayer(), aEngine.getComputerPlayer());
+				}
+			}
+		});
+		aHumanPanel.add(makeNewPanel());
+		aHumanPanel.add(aDrawDeckButton);
+		aHumanPanel.add(aDrawDiscardButton);
+		aHumanPanel.add(makeNewPanel());
+		
+		JButton aDiscardButton = new JButton("Discard");
+		aDiscardButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				Card aCard = aPlayer1.isUp();
+				if(aCard == null){
+					aLog.getTextArea().append("You must choose a card to discard!\n");
+				} else{
+					aEngine.Discard(aCard);
+					aRightPanel.removeAll();
+					aRightPanel.add(makeNewPanel());
+					aRightPanel.add(aCompPanel);
+					aRightPanel.add(makeNewPanel());
+					aRightPanel.revalidate();
+					aRightPanel.repaint();
+				}
+			}
+		});
+		aDiscardPanel.add(makeNewPanel());
+		aDiscardPanel.add(aDiscardButton);
+		aDiscardPanel.add(makeNewPanel());
+		
+		JButton aCompButton = new JButton("Computer Turn");
+		aCompButton.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				try {
+					aEngine.CompTurn();
+					aRightPanel.removeAll();
+					aRightPanel.add(makeNewPanel());
+					aRightPanel.add(aHumanPanel);
+					aRightPanel.add(makeNewPanel());
+					aRightPanel.revalidate();
+					aRightPanel.repaint();
+				} catch (EmptyDeckException e) {
+					aEngine.newGame(aEngine.getHumanPlayer(), aEngine.getComputerPlayer());
+				}
+			}
+		});
+		
+		aCompPanel.add(makeNewPanel());
+		aCompPanel.add(aCompButton);
+		aCompPanel.add(makeNewPanel());
+		
+		aRightPanel.add(aHumanPanel);
 		aRightPanel.add(makeNewPanel());
 		aPanel.add(aLog, BorderLayout.CENTER);
 		aPanel.add(aMiddlePanel, BorderLayout.CENTER);

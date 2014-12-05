@@ -90,6 +90,36 @@ public class CardPanel extends JPanel implements CardPanelObserver{
 		initialize(pHand);
 	}
 	
+	public void Draw(Card pDraw){
+		JLabel aDraw = new JLabel(CardImages.getCard(pDraw));
+		aCards.put(aDraw, pDraw);
+		removeAll();
+		Hand tempHand = new Hand();
+		for(Card aCard : aCards.values()){
+			tempHand.add(aCard);
+		}
+		initialize(tempHand);
+		validate();
+		repaint();
+	}
+	
+	public void Discard(Card pDiscard){
+		for(JLabel label : aCards.keySet()){
+			if(aCards.get(label).equals(pDiscard)){
+				aCards.remove(label);
+				break;
+			}
+		}
+		removeAll();
+		Hand tempHand = new Hand();
+		for(Card aCard : aCards.values()){
+			tempHand.add(aCard);
+		}
+		initialize(tempHand);
+		validate();
+		repaint();
+	}
+	/*
 	public void Move(Card pDiscard, Card pDraw){
 		for(JLabel label : aCards.keySet()){
 			if(aCards.get(label).equals(pDiscard)){
@@ -108,7 +138,7 @@ public class CardPanel extends JPanel implements CardPanelObserver{
 		initialize(tempHand);
 		validate();
 		repaint();
-	}
+	}*/
 	
 	public void End(int pHumanScore, int pCompScore){
 		

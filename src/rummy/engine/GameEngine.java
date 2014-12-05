@@ -43,38 +43,60 @@ public class GameEngine implements Serializable {
 		notifyObserversEnd();
 		aEnd = true;
 	}
-
-	public void nextTurn() throws EmptyDeckException{
-		Player player;
-		if(aTurn){
-			player = aHuman;
-		} else{
-			player = aComp;
-		}
-		
-		Action action = player.decide();
-		Card aDraw = null;
-		if(action == Action.DISCARD){
-			aDraw = aDiscard;
-			aDiscard = player.takeTurn(aDiscard);
-		} else if(action == Action.DECK){
-			if(aDeck.size() == 2){
-				throw new EmptyDeckException("DECK IS EMPTY");
+	
+	public boolean getTurn(){
+		return aTurn;
+	}
+	
+	public void Draw(Action pAction) throws EmptyDeckException{
+		if(pAction != null){
+			System.out.println(pAction);
+			Card aCard = null;
+			if(pAction == Action.DISCARD){
+				aCard = aDiscard;
+				aHuman.Draw(aDiscard);
+			} else if(pAction == Action.DECK){
+				aCard = aDeck.draw();
+				aHuman.Draw(aCard);
 			}
-			aDraw = aDeck.draw();
-			aDiscard = player.takeTurn(aDraw);
-		} else if(action == Action.KNOCK){
-			endGame();
-			return;
-		}
-		notifyObserversMove(action, aDraw);
-		
-		if(aTurn){
-			aHuman = player;
+			notifyObserversDraw(pAction, aCard);
 		} else{
-			aComp = player;
+			Action action = aComp.decide();
+			Card aDraw = null;
+			if(action == Action.DISCARD){
+				aDraw = aDiscard;
+				aComp.Draw(aDiscard);
+			} else if(action == Action.DECK){
+				if(aDeck.size() == 2){
+					throw new EmptyDeckException("DECK IS EMPTY");
+				}
+				aDraw = aDeck.draw();
+				aComp.Draw(aDraw);
+			} else if(action == Action.KNOCK){
+				endGame();
+				return;
+			}
+			notifyObserversDraw(action, aDraw);
 		}
+	}
+	
+	public void Discard(Card pCard){
+		aDiscard = pCard;
+		if(pCard != null){
+			aHuman.discard(pCard);
+		} else{
+			System.out.println(aDiscard);
+			aDiscard = ((ComputerPlayer) aComp).discard();
+			System.out.println(aDiscard);
+		}
+		notifyObserversDiscard(aDiscard);
 		aTurn = !aTurn;
+		System.out.println(aTurn);
+	}
+	
+	public void CompTurn() throws EmptyDeckException{
+		Draw(null);
+		Discard(null);
 	}
 	
 	public Player getHumanPlayer(){
@@ -85,7 +107,7 @@ public class GameEngine implements Serializable {
 		return aComp;
 	}
 	
-	public void Autoplay(){
+	/*public void Autoplay(){
 		while(!aEnd){
 			try {
 				nextTurn();
@@ -93,7 +115,7 @@ public class GameEngine implements Serializable {
 				newGame(aHuman, aComp);
 			}
 		}
-	}
+	}*/
 	
 	public void addCardPanel(CardPanelObserver pObserver){
 		aCardPanels.add(pObserver);
@@ -121,16 +143,17 @@ public class GameEngine implements Serializable {
 		}
 	}
 	
-	private void notifyObserversMove(Action pAction, Card pDraw){
+	/*private void notifyObserversMove(Action pAction, Card pDraw){
 		for(OtherPanelObserver observer : aObservers){
 			observer.Move(aTurn, pAction, aDiscard, pDraw);
 		}
 		if(aTurn){
-			aCardPanels.get(0).Move(aDiscard, pDraw);
+			//aCardPanels.get(0).Move(aDiscard, pDraw);
 		} else{
-			aCardPanels.get(1).Move(aDiscard, pDraw);
+			aCardPanels.get(1).Draw(pDraw);
+			aCardPanels.get(1).Discard(aDiscard);
 		}
-	}
+	}*/
 		
 	private void notifyObserversNew(){
 		for(OtherPanelObserver observer : aObservers){
@@ -138,6 +161,28 @@ public class GameEngine implements Serializable {
 		}
 		aCardPanels.get(0).New(aHuman.getHand());
 		aCardPanels.get(1).New(aComp.getHand());
+	}
+	
+	private void notifyObserversDraw(Action pAction, Card pCard){
+		for(OtherPanelObserver observer : aObservers){
+			observer.Draw(aTurn, pAction, pCard);
+		}
+		if(aTurn){
+			aCardPanels.get(0).Draw(pCard);
+		} else{
+			aCardPanels.get(1).Draw(pCard);
+		}
+	}
+	
+	private void notifyObserversDiscard(Card pCard){
+		for(OtherPanelObserver observer : aObservers){
+			observer.Discard(aTurn, pCard);
+		}
+		if(aTurn){
+			aCardPanels.get(0).Discard(pCard);
+		} else{
+			aCardPanels.get(1).Discard(pCard);
+		}
 	}
 	
 	public void saveGame(){
@@ -165,7 +210,7 @@ public class GameEngine implements Serializable {
 		}
 	}
 	
-	public static void main(String[] args){
+	/*public static void main(String[] args){
 		GameEngine test = new GameEngine();
 		Player human = new HumanPlayer("HUMAN");
 		Player comp = new ComputerPlayer("COMP");
@@ -196,7 +241,7 @@ public class GameEngine implements Serializable {
 		
 		System.out.println(human.getHand() + "\n" + comp.getHand());
 		//test.Autoplay();
-	}
+	}*/
 }
 
 class MyException extends Exception{

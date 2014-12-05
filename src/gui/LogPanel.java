@@ -32,35 +32,48 @@ public class LogPanel extends JPanel implements OtherPanelObserver{
 	    add(scroll, BorderLayout.CENTER);
 	}
 	
+	public JTextArea getTextArea(){
+		return aDisplay;
+	}
+	
 	@Override
 	public void End(int pHumanScore, int pCompScore) {
 		if(pHumanScore > pCompScore){
-			aDisplay.append("COMPUTER HAS WON WITH A SCORE OF " + pCompScore + " - " + pHumanScore + "\n");
+			aDisplay.append("Computer has won with a score of " + pCompScore + " - " + pHumanScore + "!\n");
 		} else if(pHumanScore < pCompScore){
-			aDisplay.append("Human HAS WON WITH A SCORE OF " + pHumanScore + " - " + pCompScore + "\n");
+			aDisplay.append("Computer has won with a score of " + pHumanScore + " - " + pCompScore + "!\n");
 		} else{
-			aDisplay.append("IT'S A TIE WITH A SCORE OF " + pHumanScore + " - " + pCompScore + "\n");
+			aDisplay.append("It's a tie with a score of " + pHumanScore + " - " + pCompScore + "!\n");
 		}
 	}
+	
 	@Override
-	public void Move(boolean pTurn, Action pAction, Card pCard, Card pCard2) {
+	public void Draw(boolean pTurn, Action pAction, Card pCard){
 		if(pTurn){
 			if(pAction == Action.DECK){
-				aDisplay.append("HUMAN DRAWS FROM DECK AND DISCARDS " + pCard + "\n");
+				aDisplay.append("Human draws from deck.\n");
 			} else if(pAction == Action.DISCARD){
-				aDisplay.append("HUMAN DRAWS FROM DISCARD AND DISCARDS " + pCard + "\n");
+				aDisplay.append("Human draws from discard.\n");
 			}
 		} else{
 			if(pAction == Action.DECK){
-				aDisplay.append("COMPUTER DRAWS FROM DECK AND DISCARDS " + pCard + "\n");
+				aDisplay.append("Computer draws from deck.\n");
 			} else if(pAction == Action.DISCARD){
-				aDisplay.append("COMPUTER DRAWS FROM DISCARD AND DISCARDS " + pCard + "\n");
+				aDisplay.append("Computer draws from discard.\n");
 			}
 		}
 	}
 	
+	public void Discard(boolean pTurn, Card pCard){
+		if(pTurn){
+			aDisplay.append("Human discards " + pCard + ".\n");
+		} else{
+			aDisplay.append("Computer discards " + pCard + ".\n");
+		}
+	}
+	
 	public void New(Card pCard){
-		aDisplay.append("NEW GAME HAS STARTED\n");
+		aDisplay.append("New Game has started!\n");
 	}
 	
 	

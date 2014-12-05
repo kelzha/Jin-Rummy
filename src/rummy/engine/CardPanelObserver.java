@@ -9,7 +9,8 @@ import rummy.model.Hand;
 public interface CardPanelObserver extends Serializable {
 	
 	void End(int pHumanScore, int pCompScore);
-	void Move(Card pDiscard, Card pDraw);
+	//void Move(Card pDiscard, Card pDraw);
 	void New(Hand pHand);
-	
+	void Draw(Card pDraw);
+	void Discard(Card pDiscard);
 }
