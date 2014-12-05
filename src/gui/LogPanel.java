@@ -41,7 +41,7 @@ public class LogPanel extends JPanel implements OtherPanelObserver{
 		if(pHumanScore > pCompScore){
 			aDisplay.append("Computer has won with a score of " + pCompScore + " - " + pHumanScore + "!\n");
 		} else if(pHumanScore < pCompScore){
-			aDisplay.append("Computer has won with a score of " + pHumanScore + " - " + pCompScore + "!\n");
+			aDisplay.append("Human has won with a score of " + pHumanScore + " - " + pCompScore + "!\n");
 		} else{
 			aDisplay.append("It's a tie with a score of " + pHumanScore + " - " + pCompScore + "!\n");
 		}

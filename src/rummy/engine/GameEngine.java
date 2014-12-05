@@ -58,6 +58,9 @@ public class GameEngine implements Serializable {
 			} else if(pAction == Action.DECK){
 				aCard = aDeck.draw();
 				aHuman.Draw(aCard);
+			} else if(pAction == Action.KNOCK){
+				endGame();
+				return;
 			}
 			notifyObserversDraw(pAction, aCard);
 		} else{

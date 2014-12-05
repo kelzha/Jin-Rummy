@@ -35,6 +35,8 @@ public abstract class Player implements Serializable {
 	}
 	
 	public int getScore(){
+		aHand.autoMatch();
+		aScore = aHand.score();
 		return aScore;
 	}
 	

@@ -30,6 +30,21 @@ public class GameFrame extends JFrame{
 		return aPrettyPanel;
 	}
 	
+	private void remake(JPanel pToRemake, JPanel pRemake, JPanel pPlayer){
+		pToRemake.removeAll();
+		pToRemake.add(pPlayer);
+		pToRemake.add(pRemake);
+		pToRemake.add(makeNewPanel());
+		pToRemake.revalidate();
+		pToRemake.repaint();
+	}
+	
+	private void setImagePanel(JPanel pPanel, String pLocation){
+		JLabel aLabel = new JLabel(new ImageIcon(CardImages.class.getClassLoader().getResource(pLocation)));
+		pPanel.add(aLabel);
+		pPanel.setBackground(BACKGROUND_COLOR);
+	}
+	
 	public GameFrame(){
 		setTitle("Jin Rummy");
 		setLayout(new BorderLayout());
@@ -37,13 +52,21 @@ public class GameFrame extends JFrame{
 		aPanel.setLayout(new GridLayout(1, 3));
 		add(aPanel, BorderLayout.CENTER);
 		
-		final JPanel aHumanPanel = makeCenterPanel(4,1);
+		final JPanel aHumanPanel = makeCenterPanel(5,1);
 		final JPanel aDiscardPanel = makeCenterPanel(3,1);
 		final JPanel aCompPanel = makeCenterPanel(3, 1);
 		final JPanel aMiddlePanel = makeCenterPanel(3, 1);
+		final JPanel aHumanTurnPanel = makeCenterPanel(1, 1);
+		setImagePanel(aHumanTurnPanel, "images/human.png");
+		final JPanel aCompTurnPanel = makeCenterPanel(1, 1);
+		setImagePanel(aCompTurnPanel, "images/comp.png");
+		final JPanel aWinPanel = makeCenterPanel(1, 1);
+		setImagePanel(aWinPanel, "images/win.png");
+		final JPanel aLosePanel = makeCenterPanel(1, 1);
+		setImagePanel(aLosePanel, "images/lose.png");
 		
 		final JPanel aRightPanel = makeCenterPanel(3, 1);
-		aRightPanel.add(makeNewPanel());
+		aRightPanel.add(aHumanTurnPanel);
 		
 		final CardPanel aPlayer1 = new CardPanel("Human");
 		final CardPanel aPlayer2 = new CardPanel("Computer");
@@ -65,12 +88,7 @@ public class GameFrame extends JFrame{
 			{
 				try {
 					aEngine.Draw(Action.DECK);
-					aRightPanel.removeAll();
-					aRightPanel.add(makeNewPanel());
-					aRightPanel.add(aDiscardPanel);
-					aRightPanel.add(makeNewPanel());
-					aRightPanel.revalidate();
-					aRightPanel.repaint();
+					remake(aRightPanel, aDiscardPanel, aHumanTurnPanel);
 				} catch (EmptyDeckException e) {
 					aEngine.newGame(aEngine.getHumanPlayer(), aEngine.getComputerPlayer());
 				}
@@ -84,20 +102,40 @@ public class GameFrame extends JFrame{
 			{
 				try {
 					aEngine.Draw(Action.DISCARD);
-					aRightPanel.removeAll();
-					aRightPanel.add(makeNewPanel());
-					aRightPanel.add(aDiscardPanel);
-					aRightPanel.add(makeNewPanel());
-					aRightPanel.revalidate();
-					aRightPanel.repaint();
+					remake(aRightPanel, aDiscardPanel, aHumanTurnPanel);
 				} catch (EmptyDeckException e) {
 					aEngine.newGame(aEngine.getHumanPlayer(), aEngine.getComputerPlayer());
 				}
 			}
 		});
+		
+		JButton aEndButton = new JButton("Knock");
+		aEndButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				try {
+					if(aEngine.getHumanPlayer().getScore() > 10){
+						System.out.println(aEngine.getHumanPlayer().getScore());
+						aLog.getTextArea().append("You must have less than 10 score to knock!\n");
+					} else{
+						aEngine.Draw(Action.KNOCK);
+						if(aEngine.getTurn()){
+							remake(aRightPanel, aWinPanel, makeNewPanel());
+						} else{
+							remake(aRightPanel, aLosePanel, makeNewPanel());
+						}
+					}
+				} catch (EmptyDeckException e) {
+					aEngine.newGame(aEngine.getHumanPlayer(), aEngine.getComputerPlayer());
+				}
+			}
+		});
+		
 		aHumanPanel.add(makeNewPanel());
 		aHumanPanel.add(aDrawDeckButton);
 		aHumanPanel.add(aDrawDiscardButton);
+		aHumanPanel.add(aEndButton);
 		aHumanPanel.add(makeNewPanel());
 		
 		JButton aDiscardButton = new JButton("Discard");
@@ -110,12 +148,7 @@ public class GameFrame extends JFrame{
 					aLog.getTextArea().append("You must choose a card to discard!\n");
 				} else{
 					aEngine.Discard(aCard);
-					aRightPanel.removeAll();
-					aRightPanel.add(makeNewPanel());
-					aRightPanel.add(aCompPanel);
-					aRightPanel.add(makeNewPanel());
-					aRightPanel.revalidate();
-					aRightPanel.repaint();
+					remake(aRightPanel, aCompPanel, aCompTurnPanel);
 				}
 			}
 		});
@@ -131,12 +164,7 @@ public class GameFrame extends JFrame{
 			{
 				try {
 					aEngine.CompTurn();
-					aRightPanel.removeAll();
-					aRightPanel.add(makeNewPanel());
-					aRightPanel.add(aHumanPanel);
-					aRightPanel.add(makeNewPanel());
-					aRightPanel.revalidate();
-					aRightPanel.repaint();
+					remake(aRightPanel, aHumanPanel, aHumanTurnPanel);
 				} catch (EmptyDeckException e) {
 					aEngine.newGame(aEngine.getHumanPlayer(), aEngine.getComputerPlayer());
 				}

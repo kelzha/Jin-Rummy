@@ -20,7 +20,7 @@ public class CardPanel extends JPanel implements CardPanelObserver{
 	private HashMap<JLabel, Card> aCards = new HashMap<>();
 	
 	public CardPanel(String aName){
-		super(new OverlapLayout(new Point(40, 0)));
+		super(new OverlapLayout(new Point(35, 0)));
 		setBorder(new TitledBorder( aName + "'s Hand" ));
 		
 		Insets ins = new Insets(10, 5, 0, 0);
