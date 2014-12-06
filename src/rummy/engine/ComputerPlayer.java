@@ -12,8 +12,15 @@ public class ComputerPlayer extends Player{
 	}
 	
 	public Card discard(){
+		aHand.autoMatch();
 		Iterator<Card> i = (aHand.getUnmatchedCards()).iterator();
 		Card removedCard = i.next();
+		while(i.hasNext()){
+			Card tempCard = i.next();
+			if(removedCard.compareTo(tempCard) == -1){
+				removedCard = tempCard;
+			}
+		}
 		aHand.remove(removedCard);
 		return removedCard;
 	}

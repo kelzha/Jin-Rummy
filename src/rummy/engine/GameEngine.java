@@ -16,6 +16,7 @@ public class GameEngine implements Serializable {
 	private Deck aDeck;
 	private boolean aTurn = true;
 	private boolean aEnd = false;
+	private String aWinner = null;
 	private Card aDiscard;
 	private ArrayList<OtherPanelObserver> aObservers = new ArrayList<>();
 	private ArrayList<CardPanelObserver> aCardPanels = new ArrayList<>();
@@ -24,6 +25,7 @@ public class GameEngine implements Serializable {
 		aHuman = pHuman;
 		aComp = pComp;
 		aEnd = false;
+		aWinner = null;
 		
 		aDeck = new Deck();
 		Hand humanHand = new Hand();
@@ -41,11 +43,24 @@ public class GameEngine implements Serializable {
 	
 	public void endGame(){
 		notifyObserversEnd();
+		if(aHuman.getScore() < aComp.getScore()){
+			aWinner = "Human";
+		} else{
+			aWinner = "Comp";
+		}
 		aEnd = true;
 	}
 	
 	public boolean getTurn(){
 		return aTurn;
+	}
+	
+	public boolean getEnd(){
+		return aEnd;
+	}
+	
+	public String getWinner(){
+		return aWinner;
 	}
 	
 	public void Draw(Action pAction) throws EmptyDeckException{
@@ -96,12 +111,7 @@ public class GameEngine implements Serializable {
 		aTurn = !aTurn;
 		System.out.println(aTurn);
 	}
-	
-	public void CompTurn() throws EmptyDeckException{
-		Draw(null);
-		Discard(null);
-	}
-	
+
 	public Player getHumanPlayer(){
 		return aHuman;
 	}

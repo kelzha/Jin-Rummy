@@ -116,11 +116,10 @@ public class GameFrame extends JFrame{
 			{
 				try {
 					if(aEngine.getHumanPlayer().getScore() > 10){
-						System.out.println(aEngine.getHumanPlayer().getScore());
 						aLog.getTextArea().append("You must have less than 10 score to knock!\n");
 					} else{
 						aEngine.Draw(Action.KNOCK);
-						if(aEngine.getTurn()){
+						if(aEngine.getWinner().equals("Human")){
 							remake(aRightPanel, aWinPanel, makeNewPanel());
 						} else{
 							remake(aRightPanel, aLosePanel, makeNewPanel());
@@ -163,8 +162,17 @@ public class GameFrame extends JFrame{
 			public void actionPerformed(ActionEvent arg0)
 			{
 				try {
-					aEngine.CompTurn();
-					remake(aRightPanel, aHumanPanel, aHumanTurnPanel);
+					aEngine.Draw(null);
+					if(!aEngine.getEnd()){
+						aEngine.Discard(null);
+						remake(aRightPanel, aHumanPanel, aHumanTurnPanel);
+					} else{
+						if(aEngine.getWinner().equals("Human")){
+							remake(aRightPanel, aWinPanel, makeNewPanel());
+						} else{
+							remake(aRightPanel, aLosePanel, makeNewPanel());
+						}
+					}
 				} catch (EmptyDeckException e) {
 					aEngine.newGame(aEngine.getHumanPlayer(), aEngine.getComputerPlayer());
 				}
